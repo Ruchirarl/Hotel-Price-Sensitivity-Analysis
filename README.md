@@ -31,7 +31,7 @@ The analysis yielded several key insights into customer behavior.
 ### 1. Price is the Strongest Driver of Booking Decisions
 As the price per night increases, the probability that a customer will book decreases significantly. This core relationship is visualized below, showing a clear downward trend across all customer income segments.
 
-![Price Sensitivity by Income Group](images/booking_likelihood_by_price.png)
+![Price Sensitivity by Income Group](images/Rplot.png)
 
 ### 2. High-Income Customers Are Less Deterred by Price
 While all customers are sensitive to price, higher-income customers have a significantly higher baseline probability of booking at any given price point.
