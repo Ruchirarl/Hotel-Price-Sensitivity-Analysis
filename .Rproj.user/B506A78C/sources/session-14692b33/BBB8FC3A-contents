@@ -1,0 +1,94 @@
+---
+title: "III_HW"
+author: "Ruchira Lokhande"
+date: "2024-10-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(broom)
+library(gridExtra)
+```
+```{r}
+
+setwd ("D:/Masters/UC DAVIS/FALL QUARTER/Information, Insight and Impact/HW1/")
+load ("HW1.Rdata")
+correlation <- cor(Expedia$PricePerNight, Expedia$Nights, use = "complete.obs")
+### the correlation between price and bookings is weak negative linear relationship
+print(correlation)
+
+library(ggplot2)
+ggplot(Expedia, aes(x = PricePerNight, y = Nights)) +
+  geom_point(color = "blue", alpha = 0.5) +  # Scatter plot points
+  geom_smooth(method = "lm", color = "red", se = FALSE, linetype = "dashed", size = 1) +  # Linear regression line
+  geom_smooth(method = "loess", color = "green", se = FALSE, size = 1) +  # LOESS smooth line
+  labs(title = "Scatter Plot of Price Per Night vs. Number of Nights",
+       x = "Price Per Night",
+       y = "Number of Nights") +
+  theme_minimal()
+
+colnames(Expedia)[which(colnames(Expedia) == "Booked?")] <- "Booked"
+
+ggplot(Expedia, aes(x = PricePerNight, y = Booked, color = Region)) + 
+  geom_point() +  # Scatter plot points
+  geom_smooth(method = "lm", se = FALSE) +  # Linear regression line
+  labs(title = "Price Per Night vs Booking Likelihood",
+       x = "Price Per Night",
+       y = "Booked (0 = No, 1 = Yes)") +
+  theme_minimal()  # Apply a clean theme
+
+
+#a) running simple regression:
+###priyanka 
+model5 <- lm(Booked~PricePerNight, data = Expedia)
+summary(model5)
+#running regression:
+model <- lm(Booked ~ Region + PricePerNight * UserIncome + PricePerNight * Region, data = Expedia)
+
+# Displaying the summary of the model
+summary(model)
+
+###if we create income groups and run regression:
+Expedia$IncomeGroup <- cut(Expedia$UserIncome, 
+                           breaks = c(-Inf, 40000, 80000, Inf), 
+                           labels = c("Low", "Medium", "High"))
+
+# View the distribution of income groups
+table(Expedia$IncomeGroup)
+Expedia$IncomeGroup <- cut(Expedia$UserIncome, 
+                           breaks = c(-Inf, 40000, 80000, Inf), 
+                           labels = c("Low", "Medium", "High"))
+
+# Step 3: Run the regression with the interaction terms and new IncomeGroup variable
+model2 <- lm(Booked ~ Region + PricePerNight * IncomeGroup + PricePerNight * Region, data = Expedia)
+
+# Display the summary of the model
+summary(model2)
+
+# Exponential Form
+#running regression:
+model3 <- lm(Booked ~ Region + exp(PricePerNight) * UserIncome + exp(PricePerNight) * Region, data = Expedia)
+
+# Displaying the summary of the model
+summary(model3)
+
+
+# Step 3: Run the regression with the interaction terms and new IncomeGroup variable
+model4 <- lm(Booked ~ Region + exp(PricePerNight) * IncomeGroup + exp(PricePerNight) * Region, data = Expedia)
+
+# Display the summary of the model
+summary(model4)
+
+
+# Polynomial regression with quadratic and cubic terms for PricePerNight
+model_poly <- lm(Booked ~ Region + poly(PricePerNight, 3) * UserIncome + poly(PricePerNight, 3) * Region, data = Expedia)
+
+# Display the summary of the model
+summary(model_poly)
+
+
+
+

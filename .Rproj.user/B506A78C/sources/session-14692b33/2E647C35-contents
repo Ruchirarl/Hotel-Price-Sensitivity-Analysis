@@ -1,0 +1,65 @@
+# --------------------------------------------------------------------------
+# Project: Hotel Price Sensitivity Analysis
+# Script: Generate a 25,000-row Synthetic Dataset
+# Author: [Your Name]
+# Date: 2025-09-26
+# --------------------------------------------------------------------------
+
+# Load the library needed for data manipulation
+library(tidyverse)
+
+# Use a seed for reproducibility, ensuring the same data is generated every time
+set.seed(123)
+
+# Define the number of rows for the dataset
+n_observations <- 25000
+
+# --- 1. Generate Predictor Variables ---
+
+# Simulate hotel prices, using a realistic range
+price_per_night <- runif(n_observations, min = 200, max = 650)
+
+# Simulate user income based on the observed range
+user_income <- runif(n_observations, min = 25000, max = 200000)
+
+# Simulate different US travel destinations
+regions <- c("Las Vegas", "Hawaii", "Miami", "Washington", "New York", "Chicago")
+region <- sample(regions, n_observations, replace = TRUE, prob = c(0.2, 0.15, 0.2, 0.15, 0.2, 0.1))
+
+
+# --- 2. Simulate the Booking Outcome ('Booked?') ---
+# Create a realistic booking probability based on the predictors.
+
+# Define coefficients to model the relationships:
+# - A baseline probability (intercept)
+# - Negative effect for price (higher price -> lower booking chance)
+# - Positive effect for income (higher income -> higher booking chance)
+logit_formula <- 1.2 - (price_per_night * 0.005) + (user_income * 0.000015)
+
+# Convert the logit value to a probability (0 to 1)
+booking_probability <- 1 / (1 + exp(-logit_formula))
+
+# Generate the final binary booking outcome (0 or 1)
+booked_status <- rbinom(n_observations, 1, booking_probability)
+
+
+# --- 3. Simulate the Number of Nights Booked ---
+# This logic matches your screenshot: 0 for non-bookings, and a number for bookings.
+nights_booked <- ifelse(booked_status == 1, sample(1:5, n_observations, replace = TRUE), 0)
+
+
+# --- 4. Assemble and Save the Final Dataset ---
+synthetic_hotel_data <- data.frame(
+  PricePerNight = round(price_per_night, 0),
+  Region = region,
+  UserIncome = round(user_income, 0),
+  `Booked?` = booked_status,  # Naming the column to match your image
+  Nights = nights_booked,
+  check.names = FALSE # This prevents R from changing "Booked?" to "Booked."
+)
+
+# Save the data to a CSV file for your project
+write.csv(synthetic_hotel_data, "synthetic_hotel_data.csv", row.names = FALSE)
+
+# Print a success message
+print("Successfully generated 25,000 rows of data and saved as synthetic_hotel_data.csv")
