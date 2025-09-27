@@ -1,4 +1,11 @@
 # Analysis of Hotel Booking Price Sensitivity
+<div align="center">
+
+![R](https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white)
+![RStudio](https://img.shields.io/badge/RStudio-75AADB?style=for-the-badge&logo=RStudio&logoColor=white)
+![tidyverse](https://img.shields.io/badge/tidyverse-fc5203?style=for-the-badge&logo=tidyverse&logoColor=white)
+
+</div>
 
 ## Overview
 
